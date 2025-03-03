@@ -17,4 +17,4 @@ const HOST = 'localhost';
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 app.listen(PORT, () => {
     console.log(`trial app listening on ${HOST}:${PORT}`)
-})
+}) 
