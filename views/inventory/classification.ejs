@@ -1,0 +1,11 @@
+<!-- content heading -->
+<% if (title) { %>
+    <h1 id="invPgTitle"><%= title %></h1>
+<% } else {
+    res.redirect('/')
+} %>
+
+<%# messages() %>
+
+<%- grid %>
+
