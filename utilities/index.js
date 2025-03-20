@@ -44,26 +44,28 @@ Util.buildByInvId = async function (data) {
   let display;
   const car = data[0]
   if (data[0]) {
-    display = `
+    display = `<div id="details-cont">
     <h2>${car.inv_make} ${car.inv_model}</h2>
     <div class="car-details">
       <ul>
-        <li>${car.inv_miles}</li>
-        <li>${car.inv_color}</li>
-        <li>${car.inv_year}</li>
+        <li>Mileage: ${car.inv_miles.toLocaleString('en-US')}</li>
+        <li>Exterior Color: ${car.inv_color}</li>
+        <li>Year: ${car.inv_year}</li>
       </ul>
     </div>
     <div class="car-desc">
+      <h3>About</h3>
       <p>${car.inv_description}</p>
     </div>
     <div class="car-img">
       <img src="${car.inv_image}" alt="Image of ${car.inv_make} ${car.inv_model}">
-      <p>$ ${car.inv_price}</p>
+      <p>ONLY! $${new Intl.NumberFormat('en-US').format(car.inv_price)}</p>
+    </div>
     </div>
     `
     
   } else {
-    display = '<p>Sorry details unable to be found online please call for info.</p>'
+      display = '<p>Sorry details unable to be found online please call for info.</p>'
   }
   return display;
 }
