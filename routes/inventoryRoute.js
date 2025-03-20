@@ -5,4 +5,6 @@ const invCtrl = require('../controllers/invCtrl');
 
 router.get('/type/:classificationId', invCtrl.buildByClassificationId);
 
+router.get('/detail/:invId', invCtrl.buildByInvId);
+
 module.exports = router;

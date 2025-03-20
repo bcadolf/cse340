@@ -16,4 +16,18 @@ invCont.buildByClassificationId = async function (req, res, next) {
     });
 }
 
+// build details by inv id
+invCont.buildByInvId = async function (req, res, next) {
+    const inv_id = req.params.invId;
+    const data = await invModel.getDetailByInvId(inv_id);
+    const display = await utilities.buildByInvId(data);
+    let nav = await utilities.getNav();
+    // const carName = `${data[0].inv_make}`; possible title
+    res.render('./inventory/vehicle-details',{
+        title: 'Drive Home Today!',
+        nav,
+        display,
+    });
+}
+
 module.exports = invCont;

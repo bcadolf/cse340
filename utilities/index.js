@@ -38,6 +38,34 @@ Util.buildClassificationGrid = async function(data){
       grid += '<p class="notice">Sorry, no matching vehicles found.</p>'
     }
     return grid
+}
+
+Util.buildByInvId = async function (data) {
+  let display;
+  const car = data[0]
+  if (data[0]) {
+    display = `
+    <h2>${car.inv_make} ${car.inv_model}</h2>
+    <div class="car-details">
+      <ul>
+        <li>${car.inv_miles}</li>
+        <li>${car.inv_color}</li>
+        <li>${car.inv_year}</li>
+      </ul>
+    </div>
+    <div class="car-desc">
+      <p>${car.inv_description}</p>
+    </div>
+    <div class="car-img">
+      <img src="${car.inv_image}" alt="Image of ${car.inv_make} ${car.inv_model}">
+      <p>$ ${car.inv_price}</p>
+    </div>
+    `
+    
+  } else {
+    display = '<p>Sorry details unable to be found online please call for info.</p>'
   }
+  return display;
+}
 
 module.exports = Util;
