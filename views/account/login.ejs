@@ -1,0 +1,19 @@
+<% if (title) { %>
+    <h1 id="invPgTitle"><%= title %></h1>
+<% } else {
+    res.redirect('/')
+} %>
+
+<%- messages() %>
+<div class="account-page">
+    <form class="account-form">
+        <label for="account_email">Email:</label>
+        <input type="email" name="account_email" id="account_email" required placeholder="youremail@CSE.com">
+        <label for="account_password">Password:</label>
+        <input type="password" name="account_password" id="account_password" required>
+        <button type="submit">Login</button>
+        <div>
+            <p>New account? <a href="/account/signup">Sign-Up</a></p>
+        </div>
+    </form>
+</div>

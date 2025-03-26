@@ -1,0 +1,36 @@
+<% if (title) { %>
+    <h1 id="invPgTitle"><%= title %></h1>
+<% } else {
+    res.redirect('/')
+} %>
+
+<%- messages() %>
+<% if (errors) { %>
+    <ul class="notice">
+   <% errors.array().forEach(error => { %>
+     <li><%= error.msg %></li>
+  <%  }) %>
+   </ul>
+  <% } %>
+<div class="account-page">
+    <form class="account-form" action="/account/signup" method="post">
+        <label for="account_firstname">First Name:</label>
+        <input type="text" name="account_firstname" id="account_firstname" required placeholder="Jack">
+        <label for="account_lastname">Last Name:</label>
+        <input type="text" name="account_lastname" id="account_lastname" required placeholder="Frost">
+        <label for="account_email">Email:</label>
+        <input type="email" name="account_email" id="account_email" required placeholder="youremail@CSE.com">
+        <label for="account_password">Password:</label>
+        <input type="password" name="account_password" id="account_password" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$">
+        <p class="requirements">
+            Password must be:
+            <ul>
+              <li>At least 12 characters long</li>
+              <li>Contain at least 1 uppercase letter</li>
+              <li>Contain at least 1 number</li>
+              <li>Contain at least 1 special character</li>
+            </ul>
+          </p>
+        <button type="submit">Create Account</button>
+    </form>
+</div>
