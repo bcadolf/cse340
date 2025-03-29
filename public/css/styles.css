@@ -310,6 +310,34 @@ footer {
   color: #fff9b9;
 }
 
+/* Inventory managment pages */
+#inv-manager {
+  margin: 5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.link-buttons {
+  border: 2px solid #001f20;
+  background-color: #006a70;
+  color: #fff;
+  box-shadow: 1px 2px 3px 2px #001f20;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px
+}
+
+.link-buttons:hover {
+  box-shadow: 1px 1px 1px 1px #001f20;
+  background-color: #16ffe8;
+  color: #001f20;
+}
+
+/* widescreen */
 @media only screen and (min-width: 768px) {
 
   #wrapper {
@@ -397,8 +425,13 @@ footer {
   /* accounts page formatting */
   .account-page {
   grid-column: 1/3;
-}
+  }
 
+  /* Inventory managment pages */
+  #inv-manager {
+    grid-column: 1/3;
+    flex-direction: row;
+  }
 
 }
 

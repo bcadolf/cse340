@@ -1,5 +1,7 @@
 const utilities = require('../utilities/');
 const accountModel = require('../models/account-model');
+const bcrypt = require('bcryptjs');
+
 
 // login view retrival
 async function buildLogin(req, res, next) {
@@ -23,12 +25,23 @@ async function buildSignup(req, res, next) {
 async function logSignup(req, res) {
     let nav = await utilities.getNav();
     const {account_firstname, account_lastname, account_email, account_password} = req.body;
-
+    let hashedPass;
+    try {
+            hashedPass = await bcrypt.hashSync(account_password, 10);
+        } catch (error) {
+            req.flash('notice', 'Sorry there was an error signing up');
+            res.status(500).render('account/signup', {
+                title: 'Sign-Up',
+                nav,
+                errors: null,
+            });
+        }
+        
     const logResult = await accountModel.logSignup(
         account_firstname, 
         account_lastname, 
         account_email, 
-        account_password
+        hashedPass
     );
 
     if (logResult) {

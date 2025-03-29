@@ -10,4 +10,14 @@ async function logSignup(account_firstname, account_lastname, account_email, acc
     };
 };
 
-module.exports = {logSignup}
+async function checkForEmail(account_email){
+    try {
+        const sql = "SELECT * FROM account WHERE account_email = $1";
+        const email = await pool.query(sql, [account_email]);
+        return email.rowCount;
+    } catch (error) {
+        return error.message
+    };
+};
+
+module.exports = {logSignup, checkForEmail}

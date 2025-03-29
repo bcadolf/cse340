@@ -1,5 +1,6 @@
 const utilities = require('./index');
 const { body, validationResult } = require('express-validator');
+const accountModel = require('../models/account-model');
 const validate = {};
 
 
@@ -24,7 +25,13 @@ validate.signUpRules = () => {
             .notEmpty()
             .isEmail()
             .normalizeEmail()
-            .withMessage("A valid email is required."),
+            .withMessage("A valid email is required.")
+            .custom(async (account_email) => {
+                const emailFound = await accountModel.checkForEmail(account_email);
+                if (emailFound){
+                    throw new Error('Email already in use, please login or choose a new email.')
+                }
+            }),
         body('account_password')
             .trim()
             .notEmpty()
@@ -52,6 +59,47 @@ validate.checkSignUp = async (req, res, next) => {
             nav,
             account_firstname,
             account_lastname,
+            account_email,
+        })
+        return;
+    }
+    next();
+};
+
+// validation rules for login
+validate.loginRules = () => {
+    return [
+        body('account_email')
+            .trim()
+            .escape()
+            .notEmpty()
+            .isEmail()
+            .normalizeEmail()
+            .withMessage("A valid email is required.")
+            .custom(async (account_email) => {
+                const emailFound = await accountModel.checkForEmail(account_email);
+                console.log(emailFound)
+                if (emailFound === 0){
+                    throw new Error('Email not found please renter email or signup below')
+                }
+            }),
+        body('account_password')
+            .trim()
+            .notEmpty()
+    ]
+}
+
+// run validation for login
+validate.checkLogin = async (req, res, next) => {
+    const { account_email} = req.body;
+    let errors = [];
+    errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        let nav = await utilities.getNav();
+        res.render('account/login', {
+            errors,
+            title: 'Login',
+            nav,
             account_email,
         })
         return;

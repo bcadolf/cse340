@@ -1,0 +1,11 @@
+<% if (title) { %>
+    <h1 id="invPgTitle"><%= title %></h1>
+<% } else {
+    res.redirect('/')
+} %>
+
+<% messages() %>
+<div id="inv-manager">
+    <a class="link-buttons" href="/inv/add-class">Add New Vehicle Classification</a>
+    <a class="link-buttons"href="/inv/add-inv">Add New Vehicle to Inventory</a>
+</div>

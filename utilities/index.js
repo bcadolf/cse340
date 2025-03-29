@@ -70,6 +70,45 @@ Util.buildByInvId = async function (data) {
   return display;
 }
 
+Util.buildClassificationList = async function (classification_id = null) {
+  let data = await invModel.getClassifications()
+  let classificationList =
+    '<select name="classification_id" id="classificationList" required>'
+  classificationList += "<option value=''>Choose a Classification</option>"
+  data.rows.forEach((row) => {
+    classificationList += '<option value="' + row.classification_id + '"'
+    if (
+      classification_id != null &&
+      row.classification_id == classification_id
+    ) {
+      classificationList += " selected "
+    }
+    classificationList += ">" + row.classification_name + "</option>"
+  })
+  classificationList += "</select>"
+  return classificationList
+}
+
+Util.buildaddInvForm = async function (data, values = {}) {
+  let form = '<form class="account-form" action="/inv/add-inv" method="post">';
+  data.forEach(({ column_name, data_type }) => {
+    let inputType = 'text';
+
+    if (['integer'].includes(data_type)) {
+      inputType = 'number'
+    } else if (['numeric'].includes(data_type)) {
+      inputType = 'number" step="any'
+    }
+    const value = values[column_name] || '';
+    form += `
+      <label for="${column_name}">${column_name}:</label>
+      <input type="${inputType}" id="${column_name}" name="${column_name}" required value="${value}"><br>`
+  });
+  form += await Util.buildClassificationList();
+  form += '<button type="submit">Add to Inventory</button></form>'
+  return form;
+}
+
 Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
 module.exports = Util;
