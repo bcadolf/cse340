@@ -113,7 +113,6 @@ validate.addInvRules = () => {
 
 // validation checker for adding inventory 
 validate.checkAddInv = async (req, res, next) => {
-    // const { inv_miles, inv_price, inv_year, inv_description, inv_image, inv_thumbnail, inv_make, inv_color, inv_model, classification_id } = req.body;
     let errors = [];
     errors = validationResult(req);
     
@@ -121,7 +120,6 @@ validate.checkAddInv = async (req, res, next) => {
         let data = await invModel.getInvColumns();
         let form = await utilities.buildaddInvForm(data, req.body);
         let nav = await utilities.getNav();
-        console.log(req.body)
         res.render('./inventory/add-inventory', {
             errors,
             title: 'Add Inventory Item',
