@@ -12,11 +12,12 @@ const static = require("./routes/static")
 const expressLayouts = require('express-ejs-layouts')
 const baseCtrl = require('./controllers/baseCtrl')
 const inventoryRoute = require('./routes/inventoryRoute')
-const utilities = require('./utilities/')
+const utilities = require('./utilities/index')
 const session = require('express-session')
 const pool = require('./database/')
 const accountRoute = require('./routes/accountRoute')
 const bodyParser = require("body-parser")
+const cookieParser = require('cookie-parser')
 
 // middleware
 app.use(session({
@@ -31,13 +32,15 @@ app.use(session({
 }))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
+app.use(cookieParser())
+
 // express messages middleware
 app.use(require('connect-flash')())
 app.use(function(req, res, next){
   res.locals.messages = require('express-messages')(req, res)
   next()
-})
-
+});
+app.use(utilities.checkWebToken)
 /* ***********************
  * View Engine and Templates
  *************************/

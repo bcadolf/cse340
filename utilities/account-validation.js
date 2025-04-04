@@ -29,7 +29,7 @@ validate.signUpRules = () => {
             .custom(async (account_email) => {
                 const emailFound = await accountModel.checkForEmail(account_email);
                 if (emailFound){
-                    throw new Error('Email already in use, please login or choose a new email.')
+                    throw new Error('Email not available, please login or choose a new email.')
                 }
             }),
         body('account_password')
@@ -78,7 +78,6 @@ validate.loginRules = () => {
             .withMessage("A valid email is required.")
             .custom(async (account_email) => {
                 const emailFound = await accountModel.checkForEmail(account_email);
-                console.log(emailFound)
                 if (emailFound === 0){
                     throw new Error('Email not found please renter email or signup below')
                 }
@@ -102,6 +101,7 @@ validate.checkLogin = async (req, res, next) => {
             nav,
             account_email,
         })
+        
         return;
     }
     next();

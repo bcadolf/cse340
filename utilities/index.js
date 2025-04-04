@@ -1,4 +1,6 @@
 const invModel = require('../models/inventory-model');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 const Util = {};
 
 // build navigation and dynamic function
@@ -107,6 +109,35 @@ Util.buildaddInvForm = async function (data, values = {}) {
   form += await Util.buildClassificationList();
   form += '<button type="submit">Add to Inventory</button></form>'
   return form;
+}
+
+Util.checkWebToken = async function (req, res, next) {
+  if (req.cookies.jwt) {
+    jwt.verify(
+      req.cookies.jwt,
+      process.env.ACCESS_TOKEN_SECRET,
+      function(err, accountData) {
+        if (err) {
+          req.flash('Please Log In')
+          res.clearCookie('jwt')
+          return res.redirect('/account/login')
+        }
+        res.locals.accountData = accountData
+        res.locals.loggedin = 1
+        next()
+      })
+  } else {
+    next()
+  }
+}
+
+Util.checkLoginSuccess = (req, res, next) => {
+  if (res.locals.loggedin) {
+    next()
+  } else {
+    req.flash('notice', 'Please login')
+    return res.redirect('/account/login')
+  }
 }
 
 Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
