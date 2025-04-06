@@ -93,7 +93,7 @@ Util.buildClassificationList = async function (classification_id = null) {
 
 Util.buildaddInvForm = async function (data, values = {}) {
   let form = '<form class="account-form" action="/inv/add-inv" method="post">';
-  data.forEach(({ column_name, data_type }) => {
+  data.forEach(({ key, data_type }) => {
     let inputType = 'text';
 
     if (['integer'].includes(data_type)) {
@@ -101,10 +101,10 @@ Util.buildaddInvForm = async function (data, values = {}) {
     } else if (['numeric'].includes(data_type)) {
       inputType = 'number" step="any'
     }
-    const value = values[column_name] || '';
+    const value = values[key] || '';
     form += `
-      <label for="${column_name}">${column_name}:</label>
-      <input type="${inputType}" id="${column_name}" name="${column_name}" required value="${value}"><br>`
+      <label for="${key}">${key}:</label>
+      <input type="${inputType}" id="${key}" name="${key}" required value="${value}"><br>`
   });
   form += await Util.buildClassificationList();
   form += '<button type="submit">Add to Inventory</button></form>'
@@ -138,6 +138,46 @@ Util.checkLoginSuccess = (req, res, next) => {
     req.flash('notice', 'Please login')
     return res.redirect('/account/login')
   }
+}
+
+Util.buildEditInvForm = async function (data, inv_id) {
+  // start form
+  let form = `<form class="account-form" action="/inv/edit/${inv_id}" method="post">`;
+  // go through data to build each input and label
+  data.forEach((data) => {
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        // block class id since it is called below
+        if (key === 'classification_id') {
+          continue;
+        }
+        
+        const value = data[key];
+        let inputType = 'text';
+        let stepAttribute = '';
+        // hide the inv id since we do not want that changed
+        if (key === "inv_id") {
+          inputType = 'hidden'
+          form += `
+              <input type="${inputType}" id="${key}" name="${key}" required value="${value}" ><br>`
+              continue
+        }
+        // redifine all others as needed and assign values
+        if (typeof value === 'number') {
+          inputType = 'number';
+          stepAttribute = value % 1 !== 0 ? 'step="any"' : '';
+        } else if (typeof value === 'string') {
+          inputType = 'text';
+        }
+        form += `
+              <label for="${key}">${key}:</label>
+              <input type="${inputType}" ${stepAttribute} id="${key}" name="${key}" required value="${value}" ><br>`
+      }
+    }
+  });
+  form += await Util.buildClassificationList();
+  form += '<button type="submit">Edit Item</button></form>'
+  return form;
 }
 
 Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);

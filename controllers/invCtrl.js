@@ -43,9 +43,11 @@ invCont.buildByInvId = async function (req, res, next) {
 
 invCont.buildInvManager = async function (req, res) {
     let nav = await utilities.getNav();
+    const classificationSelect = await utilities.buildClassificationList();
     res.render('./inventory/managment', {
         title: 'Inventory Management',
         nav,
+        classificationSelect,
         errors: null,
     });
 }
@@ -99,7 +101,7 @@ invCont.buildAddInv = async function (req, res) {
 
 invCont.logAddInv = async function (req, res) {
     const { inv_miles, inv_price, inv_year, inv_description, inv_image, inv_thumbnail, inv_make, inv_color, inv_model, classification_id } = req.body;
-    const logResult = await invModel.addInventory(inv_miles, inv_price, inv_year, inv_description, inv_image, inv_thumbnail, inv_make, inv_color, inv_model, classification_id);
+    const logResult = await invModel.modifyInventory(inv_miles, inv_price, inv_year, inv_description, inv_image, inv_thumbnail, inv_make, inv_color, inv_model, classification_id);
     let nav = await utilities.getNav();
     let data = await invModel.getInvColumns();
     let form = await utilities.buildaddInvForm(data, {});
@@ -118,6 +120,56 @@ invCont.logAddInv = async function (req, res) {
             title: 'Add Inventory Item',
             form,
             nav,
+        });
+    }
+
+}
+
+invCont.getInvJSON = async (req, res, next) => {
+    const classification_id = parseInt(req.params.classification_id);
+    const invData = await invModel.getInventoryByClassificationId(classification_id);
+    if (invData[0].inv_id) {
+        return res.json(invData);
+    } else {
+        next(new Error('No data returned'))
+    }
+}
+
+invCont.buildInvModify = async (req, res, next) => {
+    let nav = await utilities.getNav();
+    let inv_id = req.params.inv_id
+    let data = await invModel.getDetailByInvId(inv_id);
+    let form = await utilities.buildEditInvForm(data, inv_id);
+    res.render('./inventory/edit-inventory', {
+        title: "Edit Inventory Item",
+        form,
+        nav,
+        errors: null,
+    })
+}
+
+invCont.logEditInv = async function (req, res) {
+    const { inv_miles, inv_price, inv_year, inv_description, inv_image, inv_thumbnail, inv_make, inv_color, inv_model, classification_id, inv_id } = req.body;
+    const logResult = await invModel.modifyInventory(inv_miles, inv_price, inv_year, inv_description, inv_image, inv_thumbnail, inv_make, inv_color, inv_model, classification_id, inv_id);
+    let nav = await utilities.getNav();
+    let data = await invModel.getDetailByInvId(inv_id);
+    let form = await utilities.buildEditInvForm(data, inv_id);
+    const classificationSelect = await utilities.buildClassificationList();
+    if (logResult) {
+        req.flash('notice', `You have changed ${inv_make} ${inv_model} in the Vehicle Inventory list.`);
+        res.status(201).render('./inventory/managment', {
+            title: 'Inventory Management',
+            nav,
+            classificationSelect,
+            errors: null,
+        });
+    } else {
+        req.flash('notice', 'Adding new inventory failed.');
+        res.status(501).render('./inventory/edit-inventory', {
+            title: 'Add Inventory Item',
+            form,
+            nav,
+            errors,
         });
     }
 
