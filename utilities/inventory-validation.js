@@ -132,6 +132,26 @@ validate.checkAddInv = async (req, res, next) => {
     next();
 }
 
+validate.checkEditInv = async (req, res, next) => {
+    let errors = [];
+    errors = validationResult(req);
+    
+    if (!errors.isEmpty()) {
+        let inv_id = req.params.inv_id
+        let data = await invModel.getDetailByInvId(inv_id);
+        let form = await utilities.buildEditInvForm(data, inv_id);
+        res.render('./inventory/edit-inventory', {
+            errors,
+            title: "Edit Inventory Item",
+            form,
+            nav,
+            ...req.body,
+        })
+        return;
+    }
+    next();
+}
+
 
 
 

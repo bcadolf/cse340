@@ -26,6 +26,6 @@ router.get('/getInventory/:classification_id', utilities.handleErrors(invCtrl.ge
 // modify an inventory item
 router.get('/edit/:inv_id', utilities.handleErrors(invCtrl.buildInvModify));
 
-router.post('/edit/:inv_id', utilities.handleErrors(invCtrl.logEditInv))
+router.post('/edit/:inv_id', validate.addInvRules(), validate.checkEditInv, utilities.handleErrors(invCtrl.logEditInv))
 
 module.exports = router;
