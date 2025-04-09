@@ -12,4 +12,18 @@
   <%  }) %>
    </ul>
   <% } %>
-<p>You're Logged In</p>
+
+<% const user = locals.accountData %>
+<div class="pageView">
+    <div>
+    <h2>Welcome <%= user.account_firstname %></h2>
+
+    <a href="/account/update/<%= user.account_id %>">Update Account Information</a>
+    </div>
+    <% if (user.account_type === 'Employee' || user.account_type === 'Admin') { %>
+        <div>
+        <h3>Inventory Management</h3>
+        <p><a href="/inv/">Modify Inventory</a></p></div>
+    <% } %>
+</div>
+

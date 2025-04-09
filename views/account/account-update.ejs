@@ -1,0 +1,48 @@
+<% if (title) { %>
+    <h1 id="invPgTitle"><%= title %></h1>
+<% } else {
+    res.redirect('/')
+} %>
+
+<%- messages() %>
+
+<% if (errors) { %>
+    <ul class="notice">
+   <% errors.array().forEach(error => { %>
+     <li><%= error.msg %></li>
+  <%  }) %>
+   </ul>
+  <% } %>
+
+<% const user = locals.accountData %>
+
+<div class="pageView">
+    <form id="accountInfoForm" class="account-form" action="/account/update/info" method="post">
+        <label for="account_firstname">First Name:</label>
+        <input type="text" id="account_firstname" name="account_firstname" value="<%= account_firstname || user.account_firstname %>" required>
+        <label for="account_lastname">Last Name:</label>
+        <input type="text" id="account_lastname" name="account_lastname" value="<%= account_lastname || user.account_lastname %>" required>
+        <label for="account_email">Email:</label>
+        <input type="email" id="account_email" name="account_email" value="<%= account_email || user.account_email %>" required>
+        <button type="submit" disabled>Update Information</button>
+        <input type="hidden" id="account_id" name="account_id" value="<%= user.account_id %>" required>
+    </form>
+    
+    <form id="accountPassForm" class="account-form" action="/account/update/pass" method="post">
+        <label for="account_password">New Password:</label>
+        <input type="password" name="account_password" id="account_password" required pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$">
+        <p class="requirements">
+            New Password must be:
+            <ul>
+              <li>At least 12 characters long</li>
+              <li>Contain at least 1 uppercase letter</li>
+              <li>Contain at least 1 number</li>
+              <li>Contain at least 1 special character</li>
+            </ul>
+          </p>
+        <button disabled type="submit">Change Password</button>
+        <input type="hidden" id="account_id" name="account_id" value="<%= user.account_id %>" required>
+    </form>
+</div>
+
+<script src="../../js/inv-update.js"></script>

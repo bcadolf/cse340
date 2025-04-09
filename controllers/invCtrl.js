@@ -175,4 +175,45 @@ invCont.logEditInv = async function (req, res) {
 
 }
 
+invCont.buildInvDelete = async (req, res, next) => {
+    let nav = await utilities.getNav();
+    let inv_id = req.params.inv_id
+    let data = await invModel.getDetailByInvId(inv_id);
+    let form = await utilities.buildDeleteInvForm(data, inv_id);
+    res.render('./inventory/delete-inventory', {
+        title: "DELETE Inventory Item",
+        form,
+        nav,
+        errors: null,
+    })
+}
+
+invCont.deleteInv = async function (req, res) {
+    const { inv_make, inv_model, inv_id } = req.body;
+    const logResult = await invModel.deleteInv(inv_id);
+    let nav = await utilities.getNav();
+    let data = await invModel.getDetailByInvId(inv_id);
+    let form = await utilities.buildEditInvForm(data, inv_id);
+    const classificationSelect = await utilities.buildClassificationList();
+    if (logResult) {
+        req.flash('notice', `You have deleted ${inv_make} ${inv_model} in the Vehicle Inventory list.`);
+        res.status(201).render('./inventory/managment', {
+            title: 'Inventory Management',
+            nav,
+            classificationSelect,
+            errors: null,
+        });
+    } else {
+        req.flash('notice', 'Deleting inventory failed.');
+        res.status(501).render('./inventory/delete-inventory', {
+            title: 'DELETE Inventory Item',
+            form,
+            nav,
+            errors,
+        });
+    }
+
+}
+
+
 module.exports = invCont;

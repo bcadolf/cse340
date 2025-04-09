@@ -267,6 +267,7 @@ footer {
 }
 
 .account-form {
+  margin: 10px;
   border: 3px solid #001f20;
   border-radius: 5px;
   background-color: #006a70;
@@ -336,6 +337,44 @@ footer {
   background-color: #16ffe8;
   color: #001f20;
 }
+
+#invListView {
+  margin: 5%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: column;
+}
+
+#inv-display {
+  margin: 10px;
+  width: fit-content;
+  text-align: center;
+  background-color: #006a7076;
+}
+
+table, thead, tbody, td{
+  align-content: center;
+  border: 1px solid #001f20;
+  padding: 5px;
+  border-radius: 2px;
+}
+
+.pageView {
+  margin: 5%;
+  padding: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  border: 2px solid #006a70;
+  background-color: #006a7047;
+  border-radius: 3px;
+}
+
+
+
 
 /* widescreen */
 @media only screen and (min-width: 768px) {
@@ -433,6 +472,14 @@ footer {
     flex-direction: row;
   }
 
+  #invListView {
+    grid-column: 1/3;
+  }
+
+  .pageView {
+    grid-column: 1/3;
+  }
+  
 }
 
 /* animations */

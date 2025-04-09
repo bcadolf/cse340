@@ -76,5 +76,16 @@ async function modifyInventory(inv_miles, inv_price, inv_year, inv_description, 
     }
 }
 
+async function deleteInv(inv_id) {
+    try {
+        const sql = "DELETE FROM inventory WHERE inv_id = $1";
+        const result = await pool.query(sql, [inv_id]);
+        return result;
+    } catch (error) {
+        return error.message
+    }
+}
 
-module.exports = {getClassifications, getInventoryByClassificationId, getDetailByInvId, addClassification, checkForClass, getInvColumns, modifyInventory};
+
+
+module.exports = {getClassifications, getInventoryByClassificationId, getDetailByInvId, addClassification, checkForClass, getInvColumns, modifyInventory, deleteInv};

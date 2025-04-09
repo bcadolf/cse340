@@ -137,6 +137,7 @@ validate.checkEditInv = async (req, res, next) => {
     errors = validationResult(req);
     
     if (!errors.isEmpty()) {
+        let nav = await utilities.getNav()
         let inv_id = req.params.inv_id
         let data = await invModel.getDetailByInvId(inv_id);
         let form = await utilities.buildEditInvForm(data, inv_id);

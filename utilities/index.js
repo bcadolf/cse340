@@ -93,7 +93,7 @@ Util.buildClassificationList = async function (classification_id = null) {
 
 Util.buildaddInvForm = async function (data, values = {}) {
   let form = '<form class="account-form" action="/inv/add-inv" method="post">';
-  data.forEach(({ key, data_type }) => {
+  data.forEach(({ column_name, data_type }) => {
     let inputType = 'text';
 
     if (['integer'].includes(data_type)) {
@@ -101,10 +101,10 @@ Util.buildaddInvForm = async function (data, values = {}) {
     } else if (['numeric'].includes(data_type)) {
       inputType = 'number" step="any'
     }
-    const value = values[key] || '';
+    const value = values[column_name] || '';
     form += `
-      <label for="${key}">${key}:</label>
-      <input type="${inputType}" id="${key}" name="${key}" required value="${value}"><br>`
+      <label for="${column_name}">${column_name}:</label>
+      <input type="${inputType}" id="${column_name}" name="${column_name}" required value="${value}"><br>`
   });
   form += await Util.buildClassificationList();
   form += '<button type="submit">Add to Inventory</button></form>'
@@ -176,8 +176,83 @@ Util.buildEditInvForm = async function (data, inv_id) {
     }
   });
   form += await Util.buildClassificationList();
-  form += '<button type="submit">Edit Item</button></form>'
+  form += '<button disabled type="submit">Edit Item</button></form>'
   return form;
+}
+
+Util.buildDeleteInvForm = async function (data, inv_id) {
+  // start form
+  let form = `<form class="account-form" action="/inv/delete/${inv_id}" method="post">`;
+
+  // go through data to build each input and label
+  data.forEach((data) => {
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        // only run needed values
+        if (key === 'inv_id' || key === 'inv_make' || key === 'inv_model' || key === 'inv_year' || key === 'inv_price') {
+          const value = data[key];
+          let inputType = 'text';
+          let stepAttribute = '';
+          // hide the inv id since we do not want that changed
+          if (key === "inv_id") {
+            inputType = 'hidden'
+            form += `
+                <input type="${inputType}" id="${key}" name="${key}" required value="${value}" ><br>`
+                continue
+          }
+          // redifine all others as needed and assign values
+          if (typeof value === 'number') {
+            inputType = 'number';
+            stepAttribute = value % 1 !== 0 ? 'step="any"' : '';
+          } else if (typeof value === 'string') {
+            inputType = 'text';
+          }
+          form += `
+                <label for="${key}">${key}:</label>
+                <input type="${inputType}" ${stepAttribute} id="${key}" name="${key}" readonly value="${value}" ><br>`
+        }
+      }
+    }
+  });
+  form += '<button type="submit" title="This cannot be reversed">Delete Item</button></form>'
+  return form;
+}
+
+Util.checkAuthorization = function (loggedin, account_type) {
+    if (!loggedin) {
+      req.flash('notice', 'Please login to your account.')
+      return false;
+    } 
+
+    if (account_type === 'Employee' || account_type === 'Admin') {
+      return true;
+    }
+
+    return false;
+}
+
+Util.verifyAuthAccess = async function (req, res, next) {
+    try {
+        // const token = req.cookies.jwt;
+        // const secret = process.env.ACCESS_TOKEN_SECRET;
+        // const decoded = jwt.verify(token, secret);
+        // const account_type = decoded.account_type
+        const account_type = res.locals.accountData.account_type
+        const loggedin = res.locals.loggedin || false;
+        const isAuth = await Util.checkAuthorization(loggedin, account_type)
+
+        if (!isAuth) {
+          req.flash('notice', 'You do not have permission to access this function. If seen in error please bribe your tech support with fresh donuts to expedite the fix.')
+          return res.status(403).redirect('/account')
+            
+        } else {
+          return next()
+        }
+    } catch (err) {
+        req.flash('notice', 'Invalid or expired session. Please log in again.');
+        return res.status(401).redirect('/account/login');
+    }
+
 }
 
 Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);

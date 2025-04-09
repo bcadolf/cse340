@@ -30,4 +30,24 @@ async function verifyEmail(account_email){
     };
 };
 
-module.exports = {logSignup, checkForEmail, verifyEmail}
+async function updateInfo(account_id, account_firstname, account_lastname, account_email) {
+    try {
+        const sql = "UPDATE account SET account_firstname = $1, account_lastname = $2, account_email = $3 WHERE account_id = $4 RETURNING *";
+        const result = await pool.query(sql, [account_firstname, account_lastname, account_email, account_id]);
+        return result.rows[0];
+    } catch (error) {
+        return error.message
+    };
+}
+
+async function updatePass(account_id, account_password) {
+    try {
+        const sql = "UPDATE account SET account_password = $1 WHERE account_id = $2 RETURNING *";
+        const result = await pool.query(sql, [account_password, account_id]);
+        return result.rows[0];
+    } catch (error) {
+        return error.message
+    };
+}
+
+module.exports = {logSignup, checkForEmail, verifyEmail, updateInfo, updatePass}
