@@ -60,6 +60,8 @@ app.get('/', utilities.handleErrors(baseCtrl.buildHOME))
 app.use('/inv', inventoryRoute)
 //account routes
 app.use('/account', accountRoute)
+//quotes routes
+app.use('/quotes', quoteRoute)
 // 404 route
 app.use(async (req, res, next) => {
   next({status: 404, message: 'Sorry the page is missing or lost.'});

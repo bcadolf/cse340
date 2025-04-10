@@ -4,7 +4,6 @@ const router = new express.Router();
 const invCtrl = require('../controllers/invCtrl');
 const validate = require('../utilities/inventory-validation');
 const utilities = require('../utilities/');
-const invCont = require('../controllers/invCtrl');
 
 router.get('/type/:classificationId', invCtrl.buildByClassificationId);
 

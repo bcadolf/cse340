@@ -262,3 +262,110 @@ SELECT *
 FROM account;
 SELECT *
 FROM classification;
+CREATE TABLE IF NOT EXISTS public.quotes (
+    quote_id VARCHAR(8) NOT NULL;
+quote_make character varying NOT NULL,
+quote_model character varying NOT NULL,
+quote_year character(4) NOT NULL,
+quote_color character varying NOT NULL,
+quote_condition text NOT NULL,
+quote_vin character(17) NOT NULL,
+quote_miles integer NOT NULL,
+quote_asking_price numeric(9, 0) NOT NULL,
+quote_email character varying NOT NULL,
+quote_phone VARCHAR(12),
+quote_firstname character varying NOT NULL,
+quote_lastname character varying NOT NULL,
+quote_offer_price numeric(9, 0),
+CONSTRAINT quote_pkey PRIMARY KEY (quote_id)
+);
+CREATE OR REPLACE FUNCTION generate_alphanumeric_key() RETURNS TRIGGER AS $$ BEGIN NEW.quote_id := substr(md5(random()::text), 1, 8);
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER set_alphanumeric_key BEFORE
+INSERT ON quotes FOR EACH ROW EXECUTE FUNCTION generate_alphanumeric_key();
+INSERT INTO quotes (
+        quote_asking_price,
+        quote_miles,
+        quote_year,
+        quote_color,
+        quote_condition,
+        quote_vin,
+        quote_email,
+        quote_phone,
+        quote_firstname,
+        quote_lastname,
+        quote_make,
+        quote_model
+    )
+VALUES (
+        15000.00,
+        50000,
+        2015,
+        'Red',
+        'Good',
+        '1HGCM82633A123456',
+        'customer1@example.com',
+        '123-456-7890',
+        'John',
+        'Doe',
+        'Honda',
+        'Civic'
+    ),
+    (
+        18000.00,
+        30000,
+        2018,
+        'Blue',
+        'Excellent',
+        '2FTRX18W1YCA12345',
+        'customer2@example.com',
+        '987-654-3210',
+        'Jane',
+        'Smith',
+        'Toyota',
+        'Corolla'
+    ),
+    (
+        12000.00,
+        80000,
+        2010,
+        'Black',
+        'Fair',
+        '1FTSW21R08EA12345',
+        'customer3@example.com',
+        '555-555-5555',
+        'Bob',
+        'Brown',
+        'Ford',
+        'Focus'
+    ),
+    (
+        25000.00,
+        15000,
+        2021,
+        'White',
+        'New',
+        '3C6UR5NL7LG123456',
+        'customer4@example.com',
+        '444-444-4444',
+        'Alice',
+        'Johnson',
+        'Tesla',
+        'Model 3'
+    ),
+    (
+        10000.00,
+        90000,
+        2008,
+        'Green',
+        'Poor',
+        '4T1BG22K2WU123456',
+        'customer5@example.com',
+        '333-333-3333',
+        'Charlie',
+        'Davis',
+        'Chevrolet',
+        'Malibu'
+    );

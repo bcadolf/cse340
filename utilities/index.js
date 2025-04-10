@@ -233,10 +233,6 @@ Util.checkAuthorization = function (loggedin, account_type) {
 
 Util.verifyAuthAccess = async function (req, res, next) {
     try {
-        // const token = req.cookies.jwt;
-        // const secret = process.env.ACCESS_TOKEN_SECRET;
-        // const decoded = jwt.verify(token, secret);
-        // const account_type = decoded.account_type
         const account_type = res.locals.accountData.account_type
         const loggedin = res.locals.loggedin || false;
         const isAuth = await Util.checkAuthorization(loggedin, account_type)
@@ -253,6 +249,10 @@ Util.verifyAuthAccess = async function (req, res, next) {
         return res.status(401).redirect('/account/login');
     }
 
+}
+
+Util.buildQuoteManage = async function (req, res) {
+  
 }
 
 Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
