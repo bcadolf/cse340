@@ -263,21 +263,21 @@ FROM account;
 SELECT *
 FROM classification;
 CREATE TABLE IF NOT EXISTS public.quotes (
-    quote_id VARCHAR(8) NOT NULL;
-quote_make character varying NOT NULL,
-quote_model character varying NOT NULL,
-quote_year character(4) NOT NULL,
-quote_color character varying NOT NULL,
-quote_condition text NOT NULL,
-quote_vin character(17) NOT NULL,
-quote_miles integer NOT NULL,
-quote_asking_price numeric(9, 0) NOT NULL,
-quote_email character varying NOT NULL,
-quote_phone VARCHAR(12),
-quote_firstname character varying NOT NULL,
-quote_lastname character varying NOT NULL,
-quote_offer_price numeric(9, 0),
-CONSTRAINT quote_pkey PRIMARY KEY (quote_id)
+    quote_id VARCHAR(8) NOT NULL,
+    quote_make character varying NOT NULL,
+    quote_model character varying NOT NULL,
+    quote_year character(4) NOT NULL,
+    quote_color character varying NOT NULL,
+    quote_condition text NOT NULL,
+    quote_vin character(17) NOT NULL,
+    quote_miles integer NOT NULL,
+    quote_asking_price numeric(9, 0) NOT NULL,
+    quote_email character varying NOT NULL,
+    quote_phone VARCHAR(12),
+    quote_firstname character varying NOT NULL,
+    quote_lastname character varying NOT NULL,
+    quote_offer_price numeric(9, 0),
+    CONSTRAINT quote_pkey PRIMARY KEY (quote_id)
 );
 CREATE OR REPLACE FUNCTION generate_alphanumeric_key() RETURNS TRIGGER AS $$ BEGIN NEW.quote_id := substr(md5(random()::text), 1, 8);
 RETURN NEW;

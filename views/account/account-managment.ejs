@@ -19,11 +19,19 @@
     <h2>Welcome <%= user.account_firstname %></h2>
 
     <a href="/account/update/<%= user.account_id %>">Update Account Information</a>
+    <form class="account-form" id="quote-form" method="post">
+        <label for="quote_id">Enter Quote ID:</label>
+        <input type="text" id="quote_id" name="quote_id" required>
+        <button type="submit">View Quote</button>
+      </form>
     </div>
     <% if (user.account_type === 'Employee' || user.account_type === 'Admin') { %>
         <div>
         <h3>Inventory Management</h3>
-        <p><a href="/inv/">Modify Inventory</a></p></div>
+        <p><a href="/inv/">Modify Inventory</a></p>
+        <p><a href="/quotes/manage">Manage Quotes</a></p></div>
     <% } %>
 </div>
+
+<script src="../../js/quotes.js"></script>
 

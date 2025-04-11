@@ -13,3 +13,18 @@
   <%  }) %>
    </ul>
   <% } %>
+
+
+<div class="quotes-page">
+    
+    <%- table %>
+    
+    <form action="/quotes/process/<%= quote_id %>" id="process-form" class="account-form" method="post">
+        <label for="quote_id">ID:</label>
+        <input type="text" name="quote_id" id="quote_id" value="<%= quote_id || '' %>" required>
+        <label for="quote_offer_price">Offer Price:</label>
+        <input type="number" step="any" id="quote_offer_price" name="quote_offer_price" value="<%= quote_offer_price || '' %>">
+        <button type="submit">Respond to Quote</button>
+    </form>
+</div>
+

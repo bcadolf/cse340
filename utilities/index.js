@@ -251,8 +251,214 @@ Util.verifyAuthAccess = async function (req, res, next) {
 
 }
 
-Util.buildQuoteManage = async function (req, res) {
+// form to submit a new quote
+Util.buildNewQuoteForm = async function (schema) {
+  let form = '<form id="new-quote" class="account-form" action="/quotes/request" method="post">';
+
+  // build form dynamically from data
+  schema.forEach((column) => {
+    const {column_name, data_type} = column;
+    const value = '';
+    let inputType = 'text';
+    let stepAttribute = '';
+    // ignore autogen and employee sections
+    if (column_name === 'quote_id' || column_name === 'quote_offer_price') {
+      return;
+    }
+    //redefine input types
+    if (data_type === 'integer' || data_type === 'numeric') {
+      inputType = 'number';
+      stepAttribute = data_type === 'numeric' ? 'step="any"' : '';
+    }
+
+
+    const formatName = column_name
+      .replace(/^quote_/, '')
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+
+    form += `
+      <label for="${column_name}">${formatName}:</label>
+      <input type="${inputType}" id="${column_name}" name="${column_name}" required value="${value}"><br>`;
+  });
+  form += '<button disabled type="submit">Request Quote</button>'
+  form += '</form>';
+  return form;
+};
+
+//horizontal quote table changed to vertical left if needed
+// Util.buildQuoteTable = async function (data) {
+//   if (!Array.isArray(data)) {
+//     // If data is a single object, wrap it in an array
+//     data = [data];
+//   }
   
+//   let table = '<table class="quote-table">'
+//   // build table headers
+//   table += '<thead><tr>';
+//   const headers = Object.keys(data[0]);
+//   headers.forEach((header) => {
+//     const formatHeader = header
+//       .replace(/^quote_/, '')
+//       .replace(/_/g, ' ')
+//       .replace(/\b\w/g, (char) => char.toUpperCase());
+//     table += `<th>${formatHeader}</th>`;
+//   });
+//   table += '</tr></thead>';
+//   // build table rows
+//   table += '<tbody>'
+//   data.forEach((row) => {
+//     table += '<tr>';
+//     headers.forEach((header) => {
+//       let value = row[header];
+//       if (typeof value === 'number') {
+//         value = new Intl.NumberFormat('en-US').format(value);
+//       }
+//       table += `<td>${value || ''}</td>`;
+//     });
+//     table += `</tr>`;
+//   });
+//   table += '</tbody>';
+//   table += '</table>';
+
+//   return table;
+// };
+
+Util.buildQuoteTable = async function (data) {
+  if (!data || typeof data !== 'object') {
+    // If data is invalid, return a fallback message
+    console.error("Invalid data provided.");
+    return '<p>No data available.</p>';
+  }
+
+  // Wrap data in an array if it is not already an array
+  if (!Array.isArray(data)) {
+    data = [data];
+  }
+
+  let table = '<table class="quote-table">';
+
+  // Build vertical table rows 
+  table += '<tbody>';
+  const headers = Object.keys(data[0]); 
+  headers.forEach((header) => {
+    const formattedHeader = header
+      .replace(/^quote_/, '') 
+      .replace(/_/g, ' ') 
+      .replace(/\b\w/g, (char) => char.toUpperCase()); 
+
+    // Create a new table row for each header
+    table += '<tr>';
+    table += `<th>${formattedHeader}</th>`; 
+    table += '<td>'; 
+    data.forEach((row) => {
+      let value = row[header];
+      if (typeof value === 'number') {
+        value = new Intl.NumberFormat('en-US').format(value); 
+      } else if (value === null) {
+        value = 'N/A'; 
+      }
+      table += `${value || ''}<br>`; 
+    });
+    table += '</td>';
+    table += '</tr>';
+  });
+  table += '</tbody>';
+
+  table += '</table>';
+  return table;
+};
+
+Util.changeQuoteForm = async function (data) {
+  if (!data || typeof data !== 'object') {
+    // If data is invalid, return a fallback message
+    console.error("Invalid data provided.");
+    return '<p>No data available.</p>';
+  }
+
+  // Wrap data in an array if it is not already an array
+  if (!Array.isArray(data)) {
+    data = [data];
+  }
+  let form = '<form id="change-quote" class="account-form" action="/quotes/update" method="post">';
+
+  // build form dynamically from data
+  data.forEach((item) => {
+    for (const key in item) {
+      if (item.hasOwnProperty(key)) {
+        // only run needed values
+        if (key !== 'quote_offer_price' ) {
+          const value = item[key];
+          let inputType = 'text';
+          let stepAttribute = '';
+          // hide the inv id since we do not want that changed
+          if (key === "quote_id") {
+            inputType = 'hidden'
+            form += `
+                <input type="${inputType}" id="${key}" name="${key}" required value="${value}" ><br>`
+                continue
+          }
+          // redifine all others as needed and assign values
+          if (typeof value === 'number') {
+            inputType = 'number';
+            stepAttribute = value % 1 !== 0 ? 'step="any"' : '';
+          } else if (typeof value === 'string') {
+            inputType = 'text';
+          }
+
+          const formatName = key
+            .replace(/^quote_/, '')
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, (char) => char.toUpperCase());
+          form += `
+                <label for="${key}">${formatName}:</label>
+                <input type="${inputType}" ${stepAttribute} id="${key}" name="${key}" value="${value}" ><br>`
+        }
+      }
+    }
+  });
+  form += '<button disabled type="submit">Adjust Information</button>';
+  form += '</form>';
+  return form;
+};
+
+Util.buildQuoteList = async function (quotes) {
+    if (!quotes.length) {
+      return '<p> No quotes to review.</p>'
+  }
+  let table = `
+  <table>
+    <thead>
+      <tr>
+        <th>Quote ID</th>
+        <th>Make</th>
+        <th>Model</th>
+        <th>Lastname</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+`;
+
+  quotes.forEach((quote) => {
+    table += `
+      <tr>
+        <td>${quote.quote_id}</td>
+        <td>${quote.quote_make}</td>
+        <td>${quote.quote_model}</td>
+        <td>${quote.quote_lastname}</td>
+        <td><a href="/quotes/process/${quote.quote_id}">Process Quote</a></td>
+      </tr>
+    `;
+  });
+
+  table += `
+      </tbody>
+    </table>
+  `;
+
+  return table;
+
 }
 
 Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);

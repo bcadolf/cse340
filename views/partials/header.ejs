@@ -2,6 +2,13 @@
     <span class="siteName">
       <a href="/" title="Return to home page">CSE Motors</a>
     </span>
+    <% if (title === 'Home') { %>
+     <div id="quote-popup">
+      <p>Want to sell your vehicle?</p>
+      <a id="quotesLink" href="/quotes/request">Request A Quote</a>
+    </div>
+    <% } %>
+    
     <div id="tools">
       <% if (locals.loggedin) { %>
           <a title="Click to view account" href="/account">Account Management</a>
